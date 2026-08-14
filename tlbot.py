@@ -35,13 +35,14 @@ def handle_link(message):
     timestamp = int(time.time())
     out_template = os.path.join(DOWNLOAD_DIR, f"{timestamp}_%(id)s.%(ext)s")
 
-    ydl_opts = {
+        ydl_opts = {
         'format': 'best/bestvideo+bestaudio/best',
         'outtmpl': out_template,
         'quiet': True,
         'no_warnings': True,
-        'nopart': True, # .part ফাইলের সমস্যা বন্ধ করার জন্য
-    }
+        'nopart': True,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
