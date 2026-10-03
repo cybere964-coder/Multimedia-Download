@@ -14,8 +14,8 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 def send_welcome(message):
     welcome_text = (
         "👋 স্বাগতম!\n\n"
-        "আমাকে যেকোনো ভিডিও বা ফটোর লিংক পাঠান (Instagram Reels/Posts, YouTube, Facebook ইত্যাদি)। "
-        "আমি সরাসরি মিডিয়া ডাউনলোড করে আপনাকে পাঠিয়ে দেব।"
+        " give me a video/photos (Instagram Reels/Posts, YouTube, Facebook etc.)। "
+        "I will download the video and send it to you."
     )
     bot.reply_to(message, welcome_text)
 
@@ -23,10 +23,10 @@ def send_welcome(message):
 def handle_link(message):
     url = message.text.strip()
     if not (url.startswith("http://") or url.startswith("https://")):
-        bot.reply_to(message, "অনুগ্রহ করে একটি সঠিক ভিডিও লিংক পাঠান।")
+        bot.reply_to(message, "Please send me a correct link.")
         return
 
-    status_msg = bot.reply_to(message, "⏳ মিডিয়া প্রসেস করা হচ্ছে, দয়া করে অপেক্ষা করুন...")
+    status_msg = bot.reply_to(message, "⏳ Media is being processed, please wait.")
 
     out_template = os.path.join(DOWNLOAD_DIR, f"{message.chat.id}_%(id)s.%(ext)s")
 
@@ -47,10 +47,10 @@ def handle_link(message):
         files = glob.glob(pattern)
 
         if not files:
-            bot.edit_message_text("❌ মিডিয়া ফাইল পাওয়া যায়নি।", chat_id=message.chat.id, message_id=status_msg.message_id)
+            bot.edit_message_text("❌ Media file not found.", chat_id=message.chat.id, message_id=status_msg.message_id)
             return
 
-        bot.edit_message_text("📤 মিডিয়া পাঠানো হচ্ছে...", chat_id=message.chat.id, message_id=status_msg.message_id)
+        bot.edit_message_text("📤 Sending media files...", chat_id=message.chat.id, message_id=status_msg.message_id)
 
         for file_path in files:
             ext = os.path.splitext(file_path)[1].lower()
@@ -68,10 +68,10 @@ def handle_link(message):
                 os.remove(file_path)
 
         bot.delete_message(chat_id=message.chat.id, message_id=status_msg.message_id)
-        bot.send_message(message.chat.id, "✅ ডাউনলোড সম্পন্ন!")
+        bot.send_message(message.chat.id, "✅ Download complete!")
 
     except Exception as e:
-        bot.edit_message_text(f"❌ ডাউনলোড করতে সমস্যা হয়েছে: {str(e)}", chat_id=message.chat.id, message_id=status_msg.message_id)
+        bot.edit_message_text(f"❌ There was a problem downloading.: {str(e)}", chat_id=message.chat.id, message_id=status_msg.message_id)
 
 if __name__ == "__main__":
     print("Bot is running...")
